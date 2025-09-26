@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/martbul/playground_microservices/proto/common";
+
+// Common response structure
+message Response {
+  bool success = 1;
+  string message = 2;
+  repeated Error errors = 3;
+}
+
+// Error structure
+message Error {
+  string field = 1;
+  string message = 2;
+  string code = 3;
+}
+
+// Pagination request
+message PaginationRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string sort_by = 3;
+  string sort_order = 4; // asc, desc
+}
+
+// Pagination response
+message PaginationResponse {
+  int32 page = 1;
+  int32 limit = 2;
+  int32 total_pages = 3;
+  int64 total_count = 4;
+  bool has_next = 5;
+  bool has_prev = 6;
+}
+
+// Health check
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  string status = 1;
+  string service = 2;
+  string timestamp = 3;
+}
