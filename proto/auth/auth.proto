@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth;
 
-import "common/common.proto";
+import "proto/common/common.proto";
 
 option go_package = "github.com/martbul/playground_microservices/proto/auth";
 
@@ -58,7 +58,7 @@ message LoginResponse {
 }
 
 message ValidateTokenRequest {
-    strin token = 1;
+    string token = 1;
 }
 
 message ValidateTokenResponse {
@@ -109,5 +109,5 @@ message RefreshTokenResponse {
     common.Response response = 1;
     string token = 2;
     string refresh_token = 3;
-    int64 expires_at = 4
+    int64 expires_at = 4;
 }

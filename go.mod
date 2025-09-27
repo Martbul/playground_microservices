@@ -1,9 +1,12 @@
-module github.com/martbul/playground_microservices/services/api-gateway
+module github.com/martbul/playground_microservices
 
 go 1.25.0
 
+replace github.com/martbul/playground_microservices/proto/common => ./proto/common
+
+replace github.com/martbul/playground_microservices/proto/auth => ./proto/auth
+
 require (
-	github.com/gorilla/mux v1.8.1 // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
@@ -11,4 +14,3 @@ require (
 	google.golang.org/grpc v1.75.1 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
-

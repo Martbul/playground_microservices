@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package product;
+
+import "proto/common/common.proto";
+
+option go_package = "github.com/martbul/playground_microservices/proto/product";
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+  rpc GetCategories(GetCategoriesRequest) returns (GetCategoriesResponse);
+  rpc HealthCheck(common.HealthCheckRequest) returns (common.HealthCheckResponse);
+}
+
+// Product model
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock_quantity = 5;
+  string category = 6;
+  string image_url = 7;
+  string sku = 8;
+  bool is_active = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string created_by = 12;
+}
+
+// Category model
+message Category {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string parent_id = 4;
+  bool is_active = 5;
+}
+
+// Create product
+message CreateProductRequest {
+  string token = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock_quantity = 5;
+  string category = 6;
+  string image_url = 7;
+  string sku = 8;
+}
+
+message CreateProductResponse {
+  common.Response response = 1;
+  Product product = 2;
+}
+
+// Get product
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  common.Response response = 1;
+  Product product = 2;
+}
+
+// Update product
+message UpdateProductRequest {
+  string token = 1;
+  string id = 2;
+  string name = 3;
+  string description = 4;
+  double price = 5;
+  int32 stock_quantity = 6;
+  string category = 7;
+  string image_url = 8;
+  string sku = 9;
+  bool is_active = 10;
+}
+
+message UpdateProductResponse {
+  common.Response response = 1;
+  Product product = 2;
+}
+
+// Delete product
+message DeleteProductRequest {
+  string token = 1;
+  string id = 2;
+}
+
+message DeleteProductResponse {
+  common.Response response = 1;
+}
+
+// List products
+message ListProductsRequest {
+  common.PaginationRequest pagination = 1;
+  string category = 2;
+  bool active_only = 3;
+}
+
+message ListProductsResponse {
+  common.Response response = 1;
+  repeated Product products = 2;
+  common.PaginationResponse pagination = 3;
+}
+
+// Search products
+message SearchProductsRequest {
+  string query = 1;
+  common.PaginationRequest pagination = 2;
+  string category = 3;
+  double min_price = 4;
+  double max_price = 5;
+}
+
+message SearchProductsResponse {
+  common.Response response = 1;
+  repeated Product products = 2;
+  common.PaginationResponse pagination = 3;
+}
+
+// Get categories
+message GetCategoriesRequest {}
+
+message GetCategoriesResponse {
+  common.Response response = 1;
+  repeated Category categories = 2;
+}

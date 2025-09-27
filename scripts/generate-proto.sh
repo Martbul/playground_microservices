@@ -1,31 +1,60 @@
 #!/bin/bash
 
-# Exit on first error
+# Generate Protocol Buffer files for Go microservices
+
 set -e
 
-# Define proto paths
-PROTO_DIR="./proto"
-OUT_DIR="./proto"
+echo "🚀 Generating Protocol Buffer files..."
 
 # Check if protoc is installed
-if ! command -v protoc &> /dev/null
-then
-    echo "protoc not found. Please install protoc first."
+if ! command -v protoc &> /dev/null; then
+    echo "❌ protoc is not installed. Please install Protocol Buffers compiler."
+    echo "   Visit: https://grpc.io/docs/protoc-installation/"
     exit 1
 fi
 
-# Generate Go code for common.proto
-echo "Generating Go code for common.proto..."
-protoc -I=$PROTO_DIR \
-  --go_out=$OUT_DIR --go_opt=paths=source_relative \
-  --go-grpc_out=$OUT_DIR --go-grpc_opt=paths=source_relative \
-  $PROTO_DIR/common/common.proto
+# Check if protoc-gen-go is installed
+if ! command -v protoc-gen-go &> /dev/null; then
+    echo "❌ protoc-gen-go is not installed. Installing..."
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+fi
 
-# Generate Go code for auth.proto
-echo "Generating Go code for auth.proto..."
-protoc -I=$PROTO_DIR \
-  --go_out=$OUT_DIR --go_opt=paths=source_relative \
-  --go-grpc_out=$OUT_DIR --go-grpc_opt=paths=source_relative \
-  $PROTO_DIR/auth/auth.proto
+# Check if protoc-gen-go-grpc is installed
+if ! command -v protoc-gen-go-grpc &> /dev/null; then
+    echo "❌ protoc-gen-go-grpc is not installed. Installing..."
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+fi
 
-echo "✅ Protobuf generation completed successfully."
+# Create output directories
+mkdir -p proto/common
+mkdir -p proto/auth
+mkdir -p proto/product
+
+echo "📦 Generating common protobuf files..."
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    proto/common/common.proto
+
+echo "🔐 Generating auth protobuf files..."
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    --proto_path=. \
+    proto/auth/auth.proto
+
+echo "📦 Generating product protobuf files..."
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    --proto_path=. \
+    proto/product/product.proto
+
+echo "✅ Protocol Buffer files generated successfully!"
+echo ""
+echo "📁 Generated files:"
+echo "   - proto/common/common.pb.go"
+echo "   - proto/common/common_grpc.pb.go"
+echo "   - proto/auth/auth.pb.go"
+echo "   - proto/auth/auth_grpc.pb.go"
+echo "   - proto/product/product.pb.go"
+echo "   - proto/product/product_grpc.pb.go"
+echo ""
+echo "🎉 Ready to build your microservices!"
