@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth;
 
-import "proto/common/common.proto";
+import "common/common.proto";  // Relative import
 
 option go_package = "github.com/martbul/playground_microservices/proto/auth";
 
@@ -25,7 +25,7 @@ message User {
     string first_name = 4;
     string last_name = 5;
     string role = 6;
-    bool isActive = 7;
+    bool is_active = 7;  // Fixed field name
     string created_at = 8;
     string updated_at = 9;
 }
@@ -34,17 +34,17 @@ message RegisterRequest {
     string email = 1;
     string username = 2;
     string password = 3;
-    string fisrt_name = 4;
+    string first_name = 4;  // Fixed typo
     string last_name = 5;
 }
 
 message RegisterResponse {
     common.Response response = 1;
-    User user =2;
-    string token =3;
+    User user = 2;
+    string token = 3;
 }
 
-message LoginRequest{
+message LoginRequest {
     string email = 1;
     string password = 2;
 }
@@ -74,20 +74,20 @@ message GetUserRequest {
 
 message GetUserResponse {
     common.Response response = 1;
-    User user= 2;
+    User user = 2;
 }
 
 message UpdateProfileRequest {
     string user_id = 1;
     string token = 2;
-    string first_name =3 ;
-    string last_name =4;
-    string username =5;
+    string first_name = 3;
+    string last_name = 4;
+    string username = 5;
 }
 
 message UpdateProfileResponse {
     common.Response response = 1;
-    User user =2;
+    User user = 2;
 }
 
 message ChangePasswordRequest {

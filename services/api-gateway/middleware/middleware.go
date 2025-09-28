@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/martbul/playground_microservices/services/api-gateway/clients"
-	pb "github.com/martbul/playground_microservices/proto/auth"
+	pb "github.com/martbul/playground_microservices/services/api-gateway/genproto/auth"
 )
 
 // LoggingMiddleware logs HTTP requests

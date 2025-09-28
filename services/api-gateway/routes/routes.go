@@ -2,9 +2,9 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/playground_microservices/services/api-gateway/clients"
-	"github.com/playground_microservices/services/api-gateway/handlers"
-	"github.com/playground_microservices/services/api-gateway/middleware"
+	"github.com/martbul/playground_microservices/services/api-gateway/clients"
+	"github.com/martbul/playground_microservices/services/api-gateway/handlers"
+	"github.com/martbul/playground_microservices/services/api-gateway/middleware"
 )
 
 func SetupAuthRoutes(router *mux.Router, authHandler *handlers.AuthHandler) {

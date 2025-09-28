@@ -5,7 +5,8 @@
 		"fmt"
 		"time"
 
-		pb "github.com/martbul/playground_microservices/proto/product"
+			pb "github.com/martbul/playground_microservices/services/api-gateway/genproto/product"
+
 		"google.golang.org/grpc"
 		"google.golang.org/grpc/credentials/insecure"
 	)

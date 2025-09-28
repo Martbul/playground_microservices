@@ -6,9 +6,10 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	commonPb "github.com/playground_microservices/proto/common"
-	pb "github.com/playground_microservices/proto/product"
-	"github.com/playground_microservices/services/api-gateway/clients"
+	commonPb "github.com/martbul/playground_microservices/services/api-gateway/genproto/common"
+	pb "github.com/martbul/playground_microservices/services/api-gateway/genproto/product"
+
+	"github.com/martbul/playground_microservices/services/api-gateway/clients"
 )
 
 type ProductHandler struct {

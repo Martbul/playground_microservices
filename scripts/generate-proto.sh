@@ -1,151 +1,378 @@
-# #!/bin/bash
-
-# # Generate Protocol Buffer files for Go microservices
-
-# set -e
-
-# echo "🚀 Generating Protocol Buffer files..."
-
-# # Check if protoc is installed
-# if ! command -v protoc &> /dev/null; then
-#     echo "❌ protoc is not installed. Please install Protocol Buffers compiler."
-#     echo "   Visit: https://grpc.io/docs/protoc-installation/"
-#     exit 1
-# fi
-
-# # Check if protoc-gen-go is installed
-# if ! command -v protoc-gen-go &> /dev/null; then
-#     echo "❌ protoc-gen-go is not installed. Installing..."
-#     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-# fi
-
-# # Check if protoc-gen-go-grpc is installed
-# if ! command -v protoc-gen-go-grpc &> /dev/null; then
-#     echo "❌ protoc-gen-go-grpc is not installed. Installing..."
-#     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-# fi
-
-# # Create output directories
-# mkdir -p proto/common
-# mkdir -p proto/auth
-# mkdir -p proto/product
-
-# echo "📦 Generating common protobuf files..."
-# protoc --go_out=. --go_opt=paths=source_relative \
-#     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-#     proto/common/common.proto
-
-# echo "🔐 Generating auth protobuf files..."
-# protoc --go_out=. --go_opt=paths=source_relative \
-#     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-#     --proto_path=. \
-#     proto/auth/auth.proto
-
-# echo "📦 Generating product protobuf files..."
-# protoc --go_out=. --go_opt=paths=source_relative \
-#     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-#     --proto_path=. \
-#     proto/product/product.proto
-
-# echo "✅ Protocol Buffer files generated successfully!"
-# echo ""
-# echo "📁 Generated files:"
-# echo "   - proto/common/common.pb.go"
-# echo "   - proto/common/common_grpc.pb.go"
-# echo "   - proto/auth/auth.pb.go"
-# echo "   - proto/auth/auth_grpc.pb.go"
-# echo "   - proto/product/product.pb.go"
-# echo "   - proto/product/product_grpc.pb.go"
-# echo ""
-# echo "🎉 Ready to build your microservices!"
-
 #!/bin/bash
-
-# Simple fix - Use a single module approach instead of separate proto modules
-# This is easier and avoids complex module dependencies
 
 set -e
 
-echo "🔧 Applying simple protobuf fix..."
+echo "=== Fixing Microservices Proto Setup ==="
+echo "Current directory: $(pwd)"
+echo ""
 
-MODULE_NAME="github.com/martbul/playground_microservices"
+# Step 1: Clean up any nested proto directories and old generated files
+echo "🧹 Cleaning up old generated files..."
+if [ -d "proto/proto" ]; then
+    rm -rf proto/proto
+    echo "Removed nested proto/proto directory"
+fi
 
-# Step 1: Create a single root go.mod for the entire project
-cat > go.mod << EOF
-module $MODULE_NAME
+find proto -name "*.pb.go" -delete 2>/dev/null || true
+find proto -name "*_grpc.pb.go" -delete 2>/dev/null || true
+echo "Cleaned up old generated files"
 
-go 1.21
+# Step 2: Fix proto files to use relative imports
+echo ""
+echo "🔧 Fixing proto import paths..."
 
-require (
-    github.com/golang-jwt/jwt/v5 v5.2.0
-    github.com/gorilla/mux v1.8.1
-    github.com/gorilla/sessions v1.2.2
-    github.com/lib/pq v1.10.9
-    golang.org/x/crypto v0.17.0
-    google.golang.org/grpc v1.60.1
-    google.golang.org/protobuf v1.31.0
-)
+# Fix auth.proto
+cat > proto/auth/auth.proto << 'EOF'
+syntax = "proto3";
 
-require (
-    github.com/golang/protobuf v1.5.3 // indirect
-    github.com/gorilla/securecookie v1.1.2 // indirect
-    golang.org/x/net v0.16.0 // indirect
-    golang.org/x/sys v0.15.0 // indirect
-    golang.org/x/text v0.14.0 // indirect
-    google.golang.org/genproto/googleapis/rpc v0.0.0-20231002182017-d307bd883b97 // indirect
-)
+package auth;
+
+import "common/common.proto";  // Relative import
+
+option go_package = "github.com/martbul/playground_microservices/proto/auth";
+
+service AuthService {
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+    rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+    rpc HealthCheck(common.HealthCheckRequest) returns (common.HealthCheckResponse);
+}
+
+//User model
+message User {
+    string id = 1;
+    string email = 2;
+    string username = 3;
+    string first_name = 4;
+    string last_name = 5;
+    string role = 6;
+    bool is_active = 7;  // Fixed field name
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+message RegisterRequest {
+    string email = 1;
+    string username = 2;
+    string password = 3;
+    string first_name = 4;  // Fixed typo
+    string last_name = 5;
+}
+
+message RegisterResponse {
+    common.Response response = 1;
+    User user = 2;
+    string token = 3;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    common.Response response = 1;
+    User user = 2;
+    string token = 3;
+    string refresh_token = 4;
+    int64 expires_at = 5;
+}
+
+message ValidateTokenRequest {
+    string token = 1;
+}
+
+message ValidateTokenResponse {
+    common.Response response = 1;
+    bool valid = 2;
+    User user = 3;
+}
+
+message GetUserRequest {
+    string user_id = 1;
+    string token = 2;
+}
+
+message GetUserResponse {
+    common.Response response = 1;
+    User user = 2;
+}
+
+message UpdateProfileRequest {
+    string user_id = 1;
+    string token = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string username = 5;
+}
+
+message UpdateProfileResponse {
+    common.Response response = 1;
+    User user = 2;
+}
+
+message ChangePasswordRequest {
+    string user_id = 1;
+    string token = 2;
+    string current_password = 3;
+    string new_password = 4;
+}
+
+message ChangePasswordResponse {
+    common.Response response = 1;
+}
+
+message RefreshTokenRequest {
+    string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+    common.Response response = 1;
+    string token = 2;
+    string refresh_token = 3;
+    int64 expires_at = 4;
+}
 EOF
 
-# Step 2: Remove all service-level go.mod files
-rm -f services/*/go.mod
-rm -f proto/*/go.mod
+# Fix product.proto
+cat > proto/product/product.proto << 'EOF'
+syntax = "proto3";
 
-# Step 3: Update protobuf go_package options
-sed -i.bak 's|option go_package = ".*";|option go_package = "'$MODULE_NAME'/proto/common";|' proto/common/common.proto
-sed -i.bak 's|option go_package = ".*";|option go_package = "'$MODULE_NAME'/proto/auth";|' proto/auth/auth.proto  
-sed -i.bak 's|option go_package = ".*";|option go_package = "'$MODULE_NAME'/proto/product";|' proto/product/product.proto
+package product;
 
-# Remove backup files
-rm -f proto/*/*.bak
+import "common/common.proto";  // Relative import
 
-# Step 4: Regenerate protobuf files
-echo "📦 Regenerating protobuf files..."
+option go_package = "github.com/martbul/playground_microservices/proto/product";
 
-protoc --go_out=. --go_opt=paths=source_relative \
-    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-    proto/common/common.proto
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+  rpc GetCategories(GetCategoriesRequest) returns (GetCategoriesResponse);
+  rpc HealthCheck(common.HealthCheckRequest) returns (common.HealthCheckResponse);
+}
 
-protoc --go_out=. --go_opt=paths=source_relative \
-    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-    --proto_path=. \
-    proto/auth/auth.proto
+// Product model
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock_quantity = 5;
+  string category = 6;
+  string image_url = 7;
+  string sku = 8;
+  bool is_active = 9;
+  string created_at = 10;
+  string updated_at = 11;
+  string created_by = 12;
+}
 
-protoc --go_out=. --go_opt=paths=source_relative \
-    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-    --proto_path=. \
-    proto/product/product.proto
+// Category model
+message Category {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string parent_id = 4;
+  bool is_active = 5;
+}
 
-# Step 5: Update all Go files with correct import paths
-echo "🔄 Updating import statements..."
+// Create product
+message CreateProductRequest {
+  string token = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock_quantity = 5;
+  string category = 6;
+  string image_url = 7;
+  string sku = 8;
+}
 
-find . -name "*.go" -not -path "./proto/*" | while read file; do
-    # Update proto imports
-    sed -i.bak "s|github.com/microservices-tutorial/proto/|$MODULE_NAME/proto/|g" "$file"
-    sed -i.bak "s|github.com/microservices-tutorial/services/|$MODULE_NAME/services/|g" "$file"
+message CreateProductResponse {
+  common.Response response = 1;
+  Product product = 2;
+}
+
+// Get product
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  common.Response response = 1;
+  Product product = 2;
+}
+
+// Update product
+message UpdateProductRequest {
+  string token = 1;
+  string id = 2;
+  string name = 3;
+  string description = 4;
+  double price = 5;
+  int32 stock_quantity = 6;
+  string category = 7;
+  string image_url = 8;
+  string sku = 9;
+  bool is_active = 10;
+}
+
+message UpdateProductResponse {
+  common.Response response = 1;
+  Product product = 2;
+}
+
+// Delete product
+message DeleteProductRequest {
+  string token = 1;
+  string id = 2;
+}
+
+message DeleteProductResponse {
+  common.Response response = 1;
+}
+
+// List products
+message ListProductsRequest {
+  common.PaginationRequest pagination = 1;
+  string category = 2;
+  bool active_only = 3;
+}
+
+message ListProductsResponse {
+  common.Response response = 1;
+  repeated Product products = 2;
+  common.PaginationResponse pagination = 3;
+}
+
+// Search products
+message SearchProductsRequest {
+  string query = 1;
+  common.PaginationRequest pagination = 2;
+  string category = 3;
+  double min_price = 4;
+  double max_price = 5;
+}
+
+message SearchProductsResponse {
+  common.Response response = 1;
+  repeated Product products = 2;
+  common.PaginationResponse pagination = 3;
+}
+
+// Get categories
+message GetCategoriesRequest {}
+
+message GetCategoriesResponse {
+  common.Response response = 1;
+  repeated Category categories = 2;
+}
+EOF
+
+echo "✅ Fixed proto import paths"
+
+# Step 3: Generate proto files
+echo ""
+echo "🔄 Generating proto files..."
+
+PROTO_DIR="./proto"
+OUT_DIR="./proto"
+
+# Check protoc installation
+if ! command -v protoc &> /dev/null; then
+    echo "❌ protoc not found. Please install protoc first."
+    exit 1
+fi
+
+if ! command -v protoc-gen-go &> /dev/null || ! command -v protoc-gen-go-grpc &> /dev/null; then
+    echo "❌ Go protobuf plugins not found. Installing..."
+    echo "Please run:"
+    echo "  go install google.golang.org/protobuf/cmd/protoc-gen-go@latest"
+    echo "  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest"
+    exit 1
+fi
+
+# Generate common.proto first
+echo "Generating common.proto..."
+protoc -I=$PROTO_DIR \
+  --go_out=$OUT_DIR --go_opt=paths=source_relative \
+  --go-grpc_out=$OUT_DIR --go-grpc_opt=paths=source_relative \
+  $PROTO_DIR/common/common.proto
+
+# Generate auth.proto
+echo "Generating auth.proto..."
+protoc -I=$PROTO_DIR \
+  --go_out=$OUT_DIR --go_opt=paths=source_relative \
+  --go-grpc_out=$OUT_DIR --go-grpc_opt=paths=source_relative \
+  $PROTO_DIR/auth/auth.proto
+
+# Generate product.proto
+echo "Generating product.proto..."
+protoc -I=$PROTO_DIR \
+  --go_out=$OUT_DIR --go_opt=paths=source_relative \
+  --go-grpc_out=$OUT_DIR --go-grpc_opt=paths=source_relative \
+  $PROTO_DIR/product/product.proto
+
+echo ""
+echo "✅ Proto generation completed!"
+echo ""
+echo "📋 Generated files:"
+find proto -name "*.pb.go" -o -name "*_grpc.pb.go" | sort
+
+# Step 4: Setup service dependencies
+echo ""
+echo "🔧 Setting up service dependencies..."
+
+setup_service_deps() {
+    local service_dir="$1"
+    local service_name=$(basename "$service_dir")
     
-    # Remove backup
-    rm -f "${file}.bak"
+    echo ""
+    echo "Setting up $service_name..."
+    
+    if [ ! -f "$service_dir/go.mod" ]; then
+        echo "❌ No go.mod found in $service_name"
+        return 1
+    fi
+    
+    cd "$service_dir"
+    
+    # Add protobuf dependencies
+    go get google.golang.org/protobuf@latest
+    go get google.golang.org/grpc@latest
+    go get google.golang.org/protobuf/runtime/protoimpl@latest
+    go get google.golang.org/protobuf/reflect/protoreflect@latest
+    go get google.golang.org/protobuf/types/known/timestamppb@latest
+    go get google.golang.org/grpc/codes@latest
+    go get google.golang.org/grpc/status@latest
+    
+    # Clean up
+    go mod tidy
+    
+    echo "✅ $service_name dependencies updated"
+    
+    cd - > /dev/null
+}
+
+# Setup dependencies for each service
+for service_dir in services/*/; do
+    if [ -d "$service_dir" ]; then
+        setup_service_deps "$service_dir"
+    fi
 done
 
-# Step 6: Download dependencies
-echo "📥 Downloading dependencies..."
-go mod tidy
-
 echo ""
-echo "✅ Simple protobuf fix applied successfully!"
+echo "🎉 Microservices proto setup completed!"
 echo ""
-echo "Now you can:"
-echo "  1. Build services: go build ./services/auth-service"
-echo "  2. Or use Docker: docker-compose up --build"
-echo ""
-echo "All services now use a single module: $MODULE_NAME"
+echo "📋 Your services can now import proto packages like:"
+echo "  import pb \"github.com/martbul/playground_microservices/proto/auth\""
+echo "  import pb \"github.com/martbul/playground_microservices/proto/product\""
+echo "  import pb \"github.com/martbul/playground_microservices/proto/common\"" 

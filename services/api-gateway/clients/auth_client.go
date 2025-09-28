@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	pb "github.com/martbul/playground_microservices/proto/auth"
+				pb "github.com/martbul/playground_microservices/services/api-gateway/genproto/auth"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

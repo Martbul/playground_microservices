@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package product;
 
-import "proto/common/common.proto";
+import "common/common.proto";  // Relative import
 
 option go_package = "github.com/martbul/playground_microservices/proto/product";
 

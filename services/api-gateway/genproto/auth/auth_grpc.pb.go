@@ -8,7 +8,7 @@ package auth
 
 import (
 	context "context"
-	common "github.com/martbul/playground_microservices/proto/common"
+	common "github.com/martbul/playground_microservices/services/api-gateway/genproto/common"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
