@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/microservices-tutorial/services/client-service/clients"
-	"github.com/microservices-tutorial/services/client-service/utils"
 	"github.com/gorilla/sessions"
+	"github.com/playground_microservices/services/client-service/clients"
+	"github.com/playground_microservices/services/client-service/utils"
 )
 
 type AuthHandler struct {

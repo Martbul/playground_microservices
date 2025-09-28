@@ -72,7 +72,7 @@ DEPLOYMENTS=("postgres" "auth-service" "product-service" "api-gateway" "client-s
 
 for deployment in "${DEPLOYMENTS[@]}"; do
     print_status "Waiting for $deployment to be ready..."
-    kubectl wait --for=condition=available --timeout=300s deployment/$deployment -n microservices-tutorial
+    kubectl wait --for=condition=available --timeout=300s deployment/$deployment -n playground_microservices
     if [[ $? -eq 0 ]]; then
         print_success "$deployment is ready"
     else
@@ -82,16 +82,16 @@ done
 
 # Show status
 print_status "Deployment Status:"
-kubectl get all -n microservices-tutorial
+kubectl get all -n playground_microservices
 
 echo ""
 print_success "🎉 Deployment completed successfully!"
 echo ""
 echo "📋 Useful commands:"
-echo "   View pods: kubectl get pods -n microservices-tutorial"
-echo "   View services: kubectl get services -n microservices-tutorial"
-echo "   View logs: kubectl logs -f deployment/<service-name> -n microservices-tutorial"
-echo "   Port forward: kubectl port-forward service/client-service 8083:80 -n microservices-tutorial"
+echo "   View pods: kubectl get pods -n playground_microservices"
+echo "   View services: kubectl get services -n playground_microservices"
+echo "   View logs: kubectl logs -f deployment/<service-name> -n playground_microservices"
+echo "   Port forward: kubectl port-forward service/client-service 8083:80 -n playground_microservices"
 echo ""
 echo "🌐 Access your application:"
 echo "   If using port-forward: http://localhost:8083"

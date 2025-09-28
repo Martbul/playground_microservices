@@ -1,14 +1,14 @@
-package clients
+	package clients
 
-import (
-	"context"
-	"fmt"
-	"time"
+	import (
+		"context"
+		"fmt"
+		"time"
 
-	pb "github.com/martbul/playground_microservices/proto/product"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-)
+		pb "github.com/martbul/playground_microservices/proto/product"
+		"google.golang.org/grpc"
+		"google.golang.org/grpc/credentials/insecure"
+	)
 
 type ProductClient struct {
 	client pb.ProductServiceClient

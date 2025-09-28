@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/microservices-tutorial/services/client-service/clients"
-	"github.com/microservices-tutorial/services/client-service/utils"
 	"github.com/gorilla/sessions"
+	"github.com/playground_microservices/services/client-service/clients"
+	"github.com/playground_microservices/services/client-service/utils"
 )
 
 type PageHandler struct {
@@ -129,11 +129,11 @@ func (h *PageHandler) NotFound(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"Title":       "Page Not Found",
-		"ErrorCode":   "404",
-		"ErrorTitle":  "Page Not Found",
+		"Title":        "Page Not Found",
+		"ErrorCode":    "404",
+		"ErrorTitle":   "Page Not Found",
 		"ErrorMessage": "The page you're looking for doesn't exist.",
-		"User":        user,
+		"User":         user,
 	}
 
 	w.WriteHeader(http.StatusNotFound)

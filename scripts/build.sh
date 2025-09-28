@@ -62,7 +62,7 @@ for service in "${SERVICES[@]}"; do
     # Initialize go module if go.mod doesn't exist
     if [[ ! -f "go.mod" ]]; then
         print_warning "Initializing Go module for $service..."
-        go mod init "github.com/microservices-tutorial/services/$service"
+        go mod init "github.com/playground_microservices/services/$service"
     fi
     
     # Download dependencies

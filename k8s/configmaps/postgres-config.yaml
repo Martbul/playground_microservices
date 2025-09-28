@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: playground_microservices
+data:
+  POSTGRES_DB: "microstore"
+  POSTGRES_USER: "postgres"
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-db
+  namespace: playground_microservices
+data:
+  init-db.sql: |
+    -- Initialize databases for microservices
+    
+    -- Create databases
+    CREATE DATABASE IF NOT EXISTS auth_db;
+    CREATE DATABASE IF NOT EXISTS product_db;
+    
+    -- Grant permissions
+    GRANT ALL PRIVILEGES ON DATABASE auth_db TO postgres;
+    GRANT ALL PRIVILEGES ON DATABASE product_db TO postgres;  

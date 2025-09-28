@@ -4,12 +4,14 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/playground_microservices/services/client-service/clients"
+	"github.com/playground_microservices/services/client-service/config"
+	"github.com/playground_microservices/services/client-service/handlers"
+	"github.com/playground_microservices/services/client-service/middleware"
+	"github.com/playground_microservices/services/client-service/routes"
+
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/martbul/playground_microservices/services/client-service/config"
-	"github.com/martbul/playground_microservices/services/client-service/handlers"
-	"github.com/martbul/playground_microservices/services/client-service/middleware"
-	"github.com/martbul/playground_microservices/services/client-service/routes"
 )
 
 func main() {
@@ -45,7 +47,7 @@ func main() {
 	router.Use(middleware.SessionMiddleware(store))
 
 	// Setup routes
-	routes.SetupRoutes(router, authHandler, productHandler, pageHandler)
+	routes.SetupRoutesWithStore(router, authHandler, productHandler, pageHandler, store)
 
 	log.Printf("Client service starting on port %s", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, router))

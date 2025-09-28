@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"github.com/microservices-tutorial/services/client-service/handlers"
-	"github.com/microservices-tutorial/services/client-service/middleware"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/playground_microservices/services/client-service/handlers"
+	"github.com/playground_microservices/services/client-service/middleware"
 )
 
 func SetupRoutes(
@@ -17,7 +17,7 @@ func SetupRoutes(
 
 	// Public routes
 	router.HandleFunc("/", pageHandler.Home).Methods("GET")
-	
+
 	// Auth routes for guests only
 	guestRouter := router.NewRoute().Subrouter()
 	// guestRouter.Use(middleware.GuestOnlyMiddleware(store)) // Commented out for now
@@ -38,7 +38,7 @@ func SetupRoutes(
 	// Product routes (public + protected)
 	router.HandleFunc("/products", productHandler.ListProducts).Methods("GET")
 	router.HandleFunc("/products/{id}", productHandler.ShowProduct).Methods("GET")
-	
+
 	// Protected product routes
 	protectedRouter.HandleFunc("/products/create", productHandler.ShowCreateProduct).Methods("GET")
 	protectedRouter.HandleFunc("/products/create", productHandler.CreateProduct).Methods("POST")
@@ -60,7 +60,7 @@ func SetupRoutesWithStore(
 ) {
 	// Public routes
 	router.HandleFunc("/", pageHandler.Home).Methods("GET")
-	
+
 	// Auth routes for guests only
 	guestRouter := router.NewRoute().Subrouter()
 	guestRouter.Use(middleware.GuestOnlyMiddleware(store))
@@ -81,7 +81,7 @@ func SetupRoutesWithStore(
 	// Product routes (public + protected)
 	router.HandleFunc("/products", productHandler.ListProducts).Methods("GET")
 	router.HandleFunc("/products/{id}", productHandler.ShowProduct).Methods("GET")
-	
+
 	// Protected product routes
 	protectedRouter.HandleFunc("/products/create", productHandler.ShowCreateProduct).Methods("GET")
 	protectedRouter.HandleFunc("/products/create", productHandler.CreateProduct).Methods("POST")

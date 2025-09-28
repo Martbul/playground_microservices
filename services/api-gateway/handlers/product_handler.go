@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/microservices-tutorial/services/api-gateway/clients"
-	pb "github.com/microservices-tutorial/proto/product"
-	commonPb "github.com/microservices-tutorial/proto/common"
 	"github.com/gorilla/mux"
+	commonPb "github.com/playground_microservices/proto/common"
+	pb "github.com/playground_microservices/proto/product"
+	"github.com/playground_microservices/services/api-gateway/clients"
 )
 
 type ProductHandler struct {
@@ -178,17 +178,17 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 	// Parse query parameters
 	query := r.URL.Query()
-	
+
 	page, _ := strconv.Atoi(query.Get("page"))
 	if page <= 0 {
 		page = 1
 	}
-	
+
 	limit, _ := strconv.Atoi(query.Get("limit"))
 	if limit <= 0 {
 		limit = 10
 	}
-	
+
 	category := query.Get("category")
 	sortBy := query.Get("sort_by")
 	sortOrder := query.Get("sort_order")
@@ -219,18 +219,18 @@ func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 func (h *ProductHandler) SearchProducts(w http.ResponseWriter, r *http.Request) {
 	// Parse query parameters
 	query := r.URL.Query()
-	
+
 	searchQuery := query.Get("q")
 	page, _ := strconv.Atoi(query.Get("page"))
 	if page <= 0 {
 		page = 1
 	}
-	
+
 	limit, _ := strconv.Atoi(query.Get("limit"))
 	if limit <= 0 {
 		limit = 10
 	}
-	
+
 	category := query.Get("category")
 	minPrice, _ := strconv.ParseFloat(query.Get("min_price"), 64)
 	maxPrice, _ := strconv.ParseFloat(query.Get("max_price"), 64)

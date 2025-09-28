@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: playground_microservices
+data:
+  PORT: "8080"
+  AUTH_SERVICE: "auth-service:8081"
+  PRODUCT_SERVICE: "product-service:8082"
+  CLIENT_URL: "http://client-service"

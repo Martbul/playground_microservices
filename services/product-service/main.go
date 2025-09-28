@@ -6,11 +6,11 @@ import (
 	"log"
 	"net"
 
-	"github.com/microservices-tutorial/services/product-service/config"
-	"github.com/microservices-tutorial/services/product-service/handlers"
-	"github.com/microservices-tutorial/services/product-service/repository"
-	"github.com/microservices-tutorial/services/product-service/service"
-	pb "github.com/microservices-tutorial/proto/product"
+	pb "github.com/playground_microservices/proto/product"
+	"github.com/playground_microservices/services/product-service/config"
+	"github.com/playground_microservices/services/product-service/handlers"
+	"github.com/playground_microservices/services/product-service/repository"
+	"github.com/playground_microservices/services/product-service/service"
 
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"

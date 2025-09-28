@@ -3,8 +3,8 @@ package utils
 import (
 	"net/http"
 
-	"github.com/microservices-tutorial/services/client-service/clients"
 	"github.com/gorilla/sessions"
+	"github.com/playground_microservices/services/client-service/clients"
 )
 
 // GetUserFromSession retrieves user info from session
@@ -93,4 +93,4 @@ func SetFlashMessage(w http.ResponseWriter, r *http.Request, store *sessions.Coo
 
 	session.AddFlash(message, key)
 	session.Save(r, w)
-}	
+}
