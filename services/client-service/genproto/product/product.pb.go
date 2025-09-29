@@ -7,7 +7,7 @@
 package product
 
 import (
-	common "github.com/martbul/playground_microservices/services/auth-service/genproto/common"
+	common "github.com/martbul/playground_microservices/services/client-service/genproto/common"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

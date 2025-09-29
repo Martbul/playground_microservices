@@ -1,0 +1,216 @@
+{{define "content"}}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Products</h1>
+                <p class="text-muted">Browse our product catalog</p>
+            </div>
+            {{if .User}}
+                <a href="/products/create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Product
+                </a>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+{{if .Success}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{if eq .Success "product_deleted"}}
+            Product deleted successfully.
+        {{else}}
+            {{.Success}}
+        {{end}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{{end}}
+
+{{if .Error}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{.Error}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{{end}}
+
+<!-- Search and Filter -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" action="/products" id="searchForm">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   placeholder="Search products..." value="{{.Search}}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {{range .Categories}}
+                                    <option value="{{.Name}}" {{if eq $.Category .Name}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="sort_by" class="form-label">Sort By</label>
+                            <select class="form-select" id="sort_by" name="sort_by">
+                                <option value="">Default</option>
+                                <option value="price" {{if eq .SortBy "price"}}selected{{end}}>Price</option>
+                                <option value="name" {{if eq .SortBy "name"}}selected{{end}}>Name</option>
+                                <option value="created_at" {{if eq .SortBy "created_at"}}selected{{end}}>Date</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="sort_order" class="form-label">Order</label>
+                            <select class="form-select" id="sort_order" name="sort_order">
+                                <option value="asc" {{if eq .SortOrder "asc"}}selected{{end}}>Ascending</option>
+                                <option value="desc" {{if eq .SortOrder "desc"}}selected{{end}}>Descending</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Search
+                            </button>
+                            <a href="/products" class="btn btn-outline-secondary ms-2">Clear</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Products Grid -->
+{{if .Products}}
+    <div class="row">
+        {{range .Products}}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm product-card">
+                {{if .ImageURL}}
+                    <img src="{{.ImageURL}}" class="card-img-top" alt="{{.Name}}" style="height: 200px; object-fit: cover;">
+                {{else}}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-image text-muted fa-3x"></i>
+                    </div>
+                {{end}}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{.Name}}</h5>
+                    
+                    {{if .Category}}
+                        <span class="badge bg-secondary mb-2">{{.Category}}</span>
+                    {{end}}
+                    
+                    <p class="card-text text-muted small flex-grow-1">
+                        {{if gt (len .Description) 100}}
+                            {{slice .Description 0 100}}...
+                        {{else}}
+                            {{.Description}}
+                        {{end}}
+                    </p>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="text-primary mb-0">${{printf "%.2f" .Price}}</h4>
+                            {{if .IsActive}}
+                                {{if gt .StockQuantity 0}}
+                                    <span class="badge bg-success">In Stock ({{.StockQuantity}})</span>
+                                {{else}}
+                                    <span class="badge bg-warning">Out of Stock</span>
+                                {{end}}
+                            {{else}}
+                                <span class="badge bg-danger">Inactive</span>
+                            {{end}}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="/products/{{.ID}}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+    <!-- Pagination -->
+    {{if .Pagination}}
+        {{if gt .Pagination.TotalPages 1}}
+        <nav aria-label="Product pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Page -->
+                {{if .Pagination.HasPrev}}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{sub .Pagination.Page 1}}{{if .Category}}&category={{.Category}}{{end}}{{if .Search}}&search={{.Search}}{{end}}">
+                            Previous
+                        </a>
+                    </li>
+                {{else}}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {{end}}
+
+                <!-- Page Numbers -->
+                {{range $i := iterate .Pagination.TotalPages}}
+                    {{if eq $i $.Pagination.Page}}
+                        <li class="page-item active">
+                            <span class="page-link">{{$i}}</span>
+                        </li>
+                    {{else}}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{$i}}{{if $.Category}}&category={{$.Category}}{{end}}{{if $.Search}}&search={{$.Search}}{{end}}">
+                                {{$i}}
+                            </a>
+                        </li>
+                    {{end}}
+                {{end}}
+
+                <!-- Next Page -->
+                {{if .Pagination.HasNext}}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{add .Pagination.Page 1}}{{if .Category}}&category={{.Category}}{{end}}{{if .Search}}&search={{.Search}}{{end}}">
+                            Next
+                        </a>
+                    </li>
+                {{else}}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                {{end}}
+            </ul>
+        </nav>
+
+        <div class="text-center text-muted">
+            <small>
+                Showing page {{.Pagination.Page}} of {{.Pagination.TotalPages}} 
+                ({{.Pagination.TotalCount}} total products)
+            </small>
+        </div>
+        {{end}}
+    {{end}}
+{{else}}
+    <div class="text-center py-5">
+        <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+        <h3>No Products Found</h3>
+        <p class="text-muted">
+            {{if .Search}}
+                No products match your search criteria.
+            {{else}}
+                There are no products available at the moment.
+            {{end}}
+        </p>
+        {{if .User}}
+            <a href="/products/create" class="btn btn-primary">Add First Product</a>
+        {{end}}
+        {{if .Search}}
+            <a href="/products" class="btn btn-outline-secondary">Clear Search</a>
+        {{end}}
+    </div>
+{{end}}
+{{end}}

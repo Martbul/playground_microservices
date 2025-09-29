@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
-	"github.com/playground_microservices/services/client-service/clients"
+	"github.com/martbul/playground_microservices/services/client-service/clients"
 )
 
 // GetUserFromSession retrieves user info from session

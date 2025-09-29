@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/playground_microservices/services/client-service/handlers"
-	"github.com/playground_microservices/services/client-service/middleware"
+	"github.com/marbul/playground_microservices/services/client-service/handlers"
+	"github.com/martbul/playground_microservices/services/client-service/middleware"
 )
 
 func SetupRoutes(

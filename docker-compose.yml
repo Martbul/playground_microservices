@@ -12,8 +12,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+     - postgres_data:/var/lib/postgresql/data
+     - ./scripts/init/:/docker-entrypoint-initdb.d/
     networks:
       - microstore-network
     healthcheck:
@@ -98,27 +98,27 @@ services:
       retries: 3
 
   # Client Service (Frontend)
-  client-service:
-    build:
-      context: ./services/client-service
-      dockerfile: Dockerfile
-    container_name: microstore-client-service
-    environment:
-      - PORT=8083
-      - API_GATEWAY_URL=http://api-gateway:8080
-      - SESSION_SECRET=your-super-secret-session-key-change-in-production
-    ports:
-      - "8083:8083"
-    depends_on:
-      - api-gateway
-    networks:
-      - microstore-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8083/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+  # client-service:
+  #   build:
+  #     context: ./services/client-service
+  #     dockerfile: Dockerfile
+  #   container_name: microstore-client-service
+  #   environment:
+  #     - PORT=8083
+  #     - API_GATEWAY_URL=http://api-gateway:8080
+  #     - SESSION_SECRET=your-super-secret-session-key-change-in-production
+  #   ports:
+  #     - "8083:8083"
+  #   depends_on:
+  #     - api-gateway
+  #   networks:
+  #     - microstore-network
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8083/"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
 
 volumes:
   postgres_data:

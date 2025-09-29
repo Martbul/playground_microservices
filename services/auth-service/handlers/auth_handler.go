@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
+	pb "github.com/martbul/playground_microservices/services/auth-service/genproto/auth"
+	commonPb "github.com/martbul/playground_microservices/services/auth-service/genproto/common"
 	"github.com/martbul/playground_microservices/services/auth-service/models"
 	"github.com/martbul/playground_microservices/services/auth-service/service"
-	pb "github.com/martbul/playground_microservices/proto/auth"
-	commonPb "github.com/martbul/playground_microservices/proto/common"
 )
 
 type AuthHandler struct {

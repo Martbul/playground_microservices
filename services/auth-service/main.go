@@ -10,7 +10,7 @@ import (
 	"github.com/martbul/playground_microservices/services/auth-service/handlers"
 	"github.com/martbul/playground_microservices/services/auth-service/repository"
 	"github.com/martbul/playground_microservices/services/auth-service/service"
-	pb "github.com/martbul/playground_microservices/proto/auth"
+	pb "github.com/martbul/playground_microservices/services/auth-service/genproto/auth"
 
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"

@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/playground_microservices/services/client-service/clients"
-	"github.com/playground_microservices/services/client-service/config"
-	"github.com/playground_microservices/services/client-service/handlers"
-	"github.com/playground_microservices/services/client-service/middleware"
-	"github.com/playground_microservices/services/client-service/routes"
+	"github.com/martbul/playground_microservices/services/client-service/clients"
+	"github.com/martbul/playground_microservices/services/client-service/config"
+	"github.com/martbul/playground_microservices/services/client-service/handlers"
+	"github.com/martbul/playground_microservices/services/client-service/middleware"
+	"github.com/martbul/playground_microservices/services/client-service/routes"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"

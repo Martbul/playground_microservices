@@ -15,7 +15,7 @@ RUN go mod download
 COPY . .
 
 # Build the binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o client-service ./main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o product-service ./main.go
 
 # Final stage
 FROM alpine:latest
@@ -30,20 +30,20 @@ RUN addgroup -g 1000 appuser && \
 WORKDIR /root/
 
 # Copy the binary from builder stage
-COPY --from=builder /app/client-service .
+COPY --from=builder /app/product-service .
 
 # Change ownership to appuser
-RUN chown appuser:appuser ./client-service
+RUN chown appuser:appuser ./product-service
 
 # Switch to non-root user
 USER appuser
 
 # Expose port
-EXPOSE 8083
+EXPOSE 8082
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD nc -z localhost 8081 || exit 1
+    CMD nc -z localhost 8082 || exit 1
 
 # Run the binary
-CMD ["./client-service"]
+CMD ["./product-service"]
