@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	defer db.Close()
+	defer db.Close() //close conn after exit
 
 	// Test database connection
 	if err := db.Ping(); err != nil {
@@ -44,11 +44,13 @@ func main() {
 	authService := service.NewAuthService(userRepo, cfg.JWTSecret)
 
 	// Initialize handler
-	authHandler := handlers.NewAuthHandler(authService)
+	//The authHandler is the implementation of the grpc service
+	authHandler := handlers.NewAuthGrpcHandler(authService)
 
 	// Create gRPC server
 	server := grpc.NewServer()
-	pb.RegisterAuthServiceServer(server, authHandler)
+	// registering the authgrpchandler(authgrpcserver)
+	pb.RegisterAuthServiceServer(server, authHandler) //telling grpc to bild this authserer to our grpc server and let it handle the messages
 
 	// Start listening
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.Port))
@@ -56,6 +58,7 @@ func main() {
 		log.Fatal("Failed to listen:", err)
 	}
 
+	//Setting grpc server for auth to listen on cfg.Port
 	log.Printf("Auth service starting on port %s", cfg.Port)
 	if err := server.Serve(lis); err != nil {
 		log.Fatal("Failed to serve:", err)

@@ -10,6 +10,8 @@ import (
 	"github.com/martbul/playground_microservices/services/auth-service/utils"
 )
 
+
+//believe that the service is for interaction with the db and the handler is the actual proto service
 type AuthService interface {
 	Register(req *models.RegisterRequest) (*models.User, string, error)
 	Login(req *models.LoginRequest) (*models.User, string, string, error)

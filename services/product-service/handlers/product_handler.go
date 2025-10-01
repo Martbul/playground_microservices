@@ -11,18 +11,18 @@ import (
 	"github.com/martbul/playground_microservices/services/product-service/service"
 )
 
-type ProductHandler struct {
+type ProductGrpcHandler struct {
 	pb.UnimplementedProductServiceServer
 	productService service.ProductService
 }
 
-func NewProductHandler(productService service.ProductService) *ProductHandler {
-	return &ProductHandler{
+func NewProductGrpcHandler(productService service.ProductService) *ProductGrpcHandler {
+	return &ProductGrpcHandler{
 		productService: productService,
 	}
 }
 
-func (h *ProductHandler) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
+func (h *ProductGrpcHandler) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
 	log.Printf("Create product request: %s", req.Name)
 
 	// TODO: Validate token and get user info from auth service
@@ -59,7 +59,7 @@ func (h *ProductHandler) CreateProduct(ctx context.Context, req *pb.CreateProduc
 	}, nil
 }
 
-func (h *ProductHandler) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
+func (h *ProductGrpcHandler) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
 	log.Printf("Get product request: %s", req.Id)
 
 	product, err := h.productService.GetProduct(req.Id)
@@ -82,7 +82,7 @@ func (h *ProductHandler) GetProduct(ctx context.Context, req *pb.GetProductReque
 	}, nil
 }
 
-func (h *ProductHandler) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest) (*pb.UpdateProductResponse, error) {
+func (h *ProductGrpcHandler) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest) (*pb.UpdateProductResponse, error) {
 	log.Printf("Update product request: %s", req.Id)
 
 	// TODO: Validate token
@@ -121,7 +121,7 @@ func (h *ProductHandler) UpdateProduct(ctx context.Context, req *pb.UpdateProduc
 	}, nil
 }
 
-func (h *ProductHandler) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
+func (h *ProductGrpcHandler) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
 	log.Printf("Delete product request: %s", req.Id)
 
 	// TODO: Validate token
@@ -145,7 +145,7 @@ func (h *ProductHandler) DeleteProduct(ctx context.Context, req *pb.DeleteProduc
 	}, nil
 }
 
-func (h *ProductHandler) ListProducts(ctx context.Context, req *pb.ListProductsRequest) (*pb.ListProductsResponse, error) {
+func (h *ProductGrpcHandler) ListProducts(ctx context.Context, req *pb.ListProductsRequest) (*pb.ListProductsResponse, error) {
 	log.Printf("List products request")
 
 	var filter *models.ProductFilter
@@ -192,7 +192,7 @@ func (h *ProductHandler) ListProducts(ctx context.Context, req *pb.ListProductsR
 	}, nil
 }
 
-func (h *ProductHandler) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
+func (h *ProductGrpcHandler) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
 	log.Printf("Search products request: %s", req.Query)
 
 	filter := &models.SearchFilter{
@@ -235,7 +235,7 @@ func (h *ProductHandler) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	}, nil
 }
 
-func (h *ProductHandler) GetCategories(ctx context.Context, req *pb.GetCategoriesRequest) (*pb.GetCategoriesResponse, error) {
+func (h *ProductGrpcHandler) GetCategories(ctx context.Context, req *pb.GetCategoriesRequest) (*pb.GetCategoriesResponse, error) {
 	log.Printf("Get categories request")
 
 	categories, err := h.productService.GetCategories()
@@ -263,7 +263,7 @@ func (h *ProductHandler) GetCategories(ctx context.Context, req *pb.GetCategorie
 	}, nil
 }
 
-func (h *ProductHandler) HealthCheck(ctx context.Context, req *commonPb.HealthCheckRequest) (*commonPb.HealthCheckResponse, error) {
+func (h *ProductGrpcHandler) HealthCheck(ctx context.Context, req *commonPb.HealthCheckRequest) (*commonPb.HealthCheckResponse, error) {
 	return &commonPb.HealthCheckResponse{
 		Status:    "healthy",
 		Service:   "product-service",
@@ -271,7 +271,7 @@ func (h *ProductHandler) HealthCheck(ctx context.Context, req *commonPb.HealthCh
 	}, nil
 }
 
-func (h *ProductHandler) productToProto(product *models.Product) *pb.Product {
+func (h *ProductGrpcHandler) productToProto(product *models.Product) *pb.Product {
 	return &pb.Product{
 		Id:            product.ID,
 		Name:          product.Name,
@@ -288,7 +288,7 @@ func (h *ProductHandler) productToProto(product *models.Product) *pb.Product {
 	}
 }
 
-func (h *ProductHandler) categoryToProto(category *models.Category) *pb.Category {
+func (h *ProductGrpcHandler) categoryToProto(category *models.Category) *pb.Category {
 	var parentID string
 	if category.ParentID != nil {
 		parentID = *category.ParentID
@@ -303,7 +303,7 @@ func (h *ProductHandler) categoryToProto(category *models.Category) *pb.Category
 	}
 }
 
-func (h *ProductHandler) paginationToProto(pagination *models.PaginationResponse) *commonPb.PaginationResponse {
+func (h *ProductGrpcHandler) paginationToProto(pagination *models.PaginationResponse) *commonPb.PaginationResponse {
 	return &commonPb.PaginationResponse{
 		Page:       pagination.Page,
 		Limit:      pagination.Limit,

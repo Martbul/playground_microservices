@@ -11,18 +11,23 @@ import (
 	"github.com/martbul/playground_microservices/services/auth-service/service"
 )
 
-type AuthHandler struct {
-	pb.UnimplementedAuthServiceServer
+//here is where it creates a handler for the already implemented .proto services
+//and i beleve(not sure) these are the actual methods that are exposed to grpc clients(but not sure)
+type AuthGrpcHandler struct {
+	//this has receiver methods
+	pb.UnimplementedAuthServiceServer //embedig a auto generated struct into the server
 	authService service.AuthService
 }
 
-func NewAuthHandler(authService service.AuthService) *AuthHandler {
-	return &AuthHandler{
+func NewAuthGrpcHandler(authService service.AuthService) *AuthGrpcHandler {
+	return &AuthGrpcHandler{
 		authService: authService,
 	}
 }
 
-func (h *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+
+//regiser is specifed in the auth.proto it is implemented here
+func (h *AuthGrpcHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	log.Printf("Register request for email: %s", req.Email)
 
 	registerReq := &models.RegisterRequest{
@@ -32,6 +37,7 @@ func (h *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*p
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 	}
+	
 
 	user, token, err := h.authService.Register(registerReq)
 	if err != nil {
@@ -44,6 +50,7 @@ func (h *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*p
 		}, nil
 	}
 
+
 	return &pb.RegisterResponse{
 		Response: &commonPb.Response{
 			Success: true,
@@ -54,7 +61,7 @@ func (h *AuthHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*p
 	}, nil
 }
 
-func (h *AuthHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (h *AuthGrpcHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	log.Printf("Login request for email: %s", req.Email)
 
 	loginReq := &models.LoginRequest{
@@ -85,7 +92,7 @@ func (h *AuthHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 	}, nil
 }
 
-func (h *AuthHandler) ValidateToken(ctx context.Context, req *pb.ValidateTokenRequest) (*pb.ValidateTokenResponse, error) {
+func (h *AuthGrpcHandler) ValidateToken(ctx context.Context, req *pb.ValidateTokenRequest) (*pb.ValidateTokenResponse, error) {
 	log.Printf("Token validation request")
 
 	user, err := h.authService.ValidateToken(req.Token)
@@ -110,7 +117,7 @@ func (h *AuthHandler) ValidateToken(ctx context.Context, req *pb.ValidateTokenRe
 	}, nil
 }
 
-func (h *AuthHandler) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
+func (h *AuthGrpcHandler) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	log.Printf("Get user request for ID: %s", req.UserId)
 
 	// Validate token first
@@ -145,7 +152,7 @@ func (h *AuthHandler) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 	}, nil
 }
 
-func (h *AuthHandler) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
+func (h *AuthGrpcHandler) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRequest) (*pb.UpdateProfileResponse, error) {
 	log.Printf("Update profile request for user ID: %s", req.UserId)
 
 	// Validate token first
@@ -186,7 +193,7 @@ func (h *AuthHandler) UpdateProfile(ctx context.Context, req *pb.UpdateProfileRe
 	}, nil
 }
 
-func (h *AuthHandler) ChangePassword(ctx context.Context, req *pb.ChangePasswordRequest) (*pb.ChangePasswordResponse, error) {
+func (h *AuthGrpcHandler) ChangePassword(ctx context.Context, req *pb.ChangePasswordRequest) (*pb.ChangePasswordResponse, error) {
 	log.Printf("Change password request for user ID: %s", req.UserId)
 
 	// Validate token first
@@ -225,7 +232,7 @@ func (h *AuthHandler) ChangePassword(ctx context.Context, req *pb.ChangePassword
 	}, nil
 }
 
-func (h *AuthHandler) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
+func (h *AuthGrpcHandler) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
 	log.Printf("Refresh token request")
 
 	newToken, newRefreshToken, err := h.authService.RefreshToken(req.RefreshToken)
@@ -250,7 +257,7 @@ func (h *AuthHandler) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequ
 	}, nil
 }
 
-func (h *AuthHandler) HealthCheck(ctx context.Context, req *commonPb.HealthCheckRequest) (*commonPb.HealthCheckResponse, error) {
+func (h *AuthGrpcHandler) HealthCheck(ctx context.Context, req *commonPb.HealthCheckRequest) (*commonPb.HealthCheckResponse, error) {
 	return &commonPb.HealthCheckResponse{
 		Status:    "healthy",
 		Service:   "auth-service",
@@ -258,7 +265,7 @@ func (h *AuthHandler) HealthCheck(ctx context.Context, req *commonPb.HealthCheck
 	}, nil
 }
 
-func (h *AuthHandler) userToProto(user *models.User) *pb.User {
+func (h *AuthGrpcHandler) userToProto(user *models.User) *pb.User {
 	return &pb.User{
 		Id:        user.ID,
 		Email:     user.Email,

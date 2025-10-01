@@ -16,7 +16,7 @@ func SetupAuthRoutes(router *mux.Router, authHandler *handlers.AuthHandler) {
 	authRouter.HandleFunc("/refresh", authHandler.RefreshToken).Methods("POST")
 }
 
-func SetupProductRoutes(router *mux.Router, productHandler *handlers.ProductHandler, authClient *clients.AuthClient) {
+func SetupProductRoutes(router *mux.Router, productHandler *handlers.ProductHandler, authClient *clients.AuthGrpcClient) {
 	productRouter := router.PathPrefix("/api/products").Subrouter()
 
 	// Public routes (no authentication required)
@@ -35,7 +35,7 @@ func SetupProductRoutes(router *mux.Router, productHandler *handlers.ProductHand
 	protectedRouter.HandleFunc("/{id}", productHandler.DeleteProduct).Methods("DELETE")
 }
 
-func SetupProtectedAuthRoutes(router *mux.Router, authHandler *handlers.AuthHandler, authClient *clients.AuthClient) {
+func SetupProtectedAuthRoutes(router *mux.Router, authHandler *handlers.AuthHandler, authClient *clients.AuthGrpcClient) {
 	authRouter := router.PathPrefix("/api/auth").Subrouter()
 	authRouter.Use(middleware.AuthMiddleware(authClient))
 

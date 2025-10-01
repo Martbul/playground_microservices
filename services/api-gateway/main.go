@@ -14,10 +14,10 @@ import (
 
 func main() {
 	// Load configuration
-	cfg := config.Load()
+	cfg := config.Load()  //! use viper for configuratin instead
 
 	// Initialize gRPC clients
-	authClient, err := clients.NewAuthClient(cfg.AuthService)
+	authClient, err := clients.NewAuthGrpcClient(cfg.AuthService)
 	if err != nil {
 		log.Fatal("Failed to connect to auth service:", err)
 	}

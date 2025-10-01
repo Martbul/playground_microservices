@@ -51,7 +51,7 @@ func CORSMiddleware(next http.Handler) http.Handler {
 }
 
 // AuthMiddleware validates JWT tokens
-func AuthMiddleware(authClient *clients.AuthClient) func(http.Handler) http.Handler {
+func AuthMiddleware(authClient *clients.AuthGrpcClient) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Get token from Authorization header
@@ -98,7 +98,7 @@ func AuthMiddleware(authClient *clients.AuthClient) func(http.Handler) http.Hand
 }
 
 // OptionalAuthMiddleware validates JWT tokens but allows requests without them
-func OptionalAuthMiddleware(authClient *clients.AuthClient) func(http.Handler) http.Handler {
+func OptionalAuthMiddleware(authClient *clients.AuthGrpcClient) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Get token from Authorization header

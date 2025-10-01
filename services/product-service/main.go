@@ -6,8 +6,7 @@ import (
 	"log"
 	"net"
 
-		pb "github.com/martbul/playground_microservices/services/product-service/genproto/product"
-
+	pb "github.com/martbul/playground_microservices/services/product-service/genproto/product"
 	"github.com/martbul/playground_microservices/services/product-service/config"
 	"github.com/martbul/playground_microservices/services/product-service/handlers"
 	"github.com/martbul/playground_microservices/services/product-service/repository"
@@ -45,7 +44,7 @@ func main() {
 	productService := service.NewProductService(productRepo)
 
 	// Initialize handler
-	productHandler := handlers.NewProductHandler(productService)
+	productHandler := handlers.NewProductGrpcHandler(productService)
 
 	// Create gRPC server
 	server := grpc.NewServer()
