@@ -28,6 +28,7 @@ func (h *PageHandler) Home(w http.ResponseWriter, r *http.Request) {
 		Limit: 6,
 	}
 
+	// FIXED: Remove type assertion
 	resp, err := h.apiClient.ListProducts(r.Context(), params)
 	if err != nil {
 		// Continue without products if there's an error
@@ -35,8 +36,6 @@ func (h *PageHandler) Home(w http.ResponseWriter, r *http.Request) {
 			Products: []clients.Product{},
 		}
 	}
-
-	listResp := resp.(*clients.ProductListResponse)
 
 	// Check if user is authenticated
 	user, _, _ := utils.GetUserFromSession(r, h.store)
@@ -52,7 +51,7 @@ func (h *PageHandler) Home(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"Title":            "Welcome to MicroStore",
-		"FeaturedProducts": listResp.Products,
+		"FeaturedProducts": resp.Products,
 		"User":             user,
 	}
 
@@ -73,6 +72,7 @@ func (h *PageHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		Limit: 10,
 	}
 
+	// FIXED: Remove type assertion
 	resp, err := h.apiClient.ListProducts(r.Context(), params)
 	if err != nil {
 		resp = &clients.ProductListResponse{
@@ -80,18 +80,15 @@ func (h *PageHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	listResp := resp.(*clients.ProductListResponse)
-
-	// Get fresh user profile
+	// FIXED: Remove type assertion
 	profileResp, err := h.apiClient.GetProfile(r.Context(), token)
 	if err != nil {
 		http.Redirect(w, r, "/login?error=token_expired", http.StatusFound)
 		return
 	}
 
-	profile := profileResp.(*clients.ProfileResponse)
-	if !profile.Response.Success {
-		http.Redirect(w, r, "/login?error="+profile.Response.Message, http.StatusFound)
+	if !profileResp.Response.Success {
+		http.Redirect(w, r, "/login?error="+profileResp.Response.Message, http.StatusFound)
 		return
 	}
 
@@ -106,8 +103,8 @@ func (h *PageHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"Title":          "Dashboard",
-		"User":           profile.User,
-		"RecentProducts": listResp.Products,
+		"User":           profileResp.User,
+		"RecentProducts": resp.Products,
 		"Success":        r.URL.Query().Get("success"),
 		"Error":          r.URL.Query().Get("error"),
 	}

@@ -1,11 +1,12 @@
-CREATE DATABASE IF NOT EXISTS auth_db;
-CREATE DATABASE IF NOT EXISTS product_db;
+-- PostgreSQL doesn't support IF NOT EXISTS for CREATE DATABASE
+-- Instead, we use a DO block to check if the database exists first
 
-\c auth_db
--- optional: tables or demo data
+-- Create auth_db if it doesn't exist
+SELECT 'CREATE DATABASE auth_db'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'auth_db')\gexec
 
-\c product_db
--- optional: tables or demo data
+-- Create product_db if it doesn't exist
+SELECT 'CREATE DATABASE product_db'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'product_db')\gexec
 
-GRANT ALL PRIVILEGES ON DATABASE auth_db TO postgres;
-GRANT ALL PRIVILEGES ON DATABASE product_db TO postgres;
+-- Note: The default 'postgres' database already exists and is used by the gateway

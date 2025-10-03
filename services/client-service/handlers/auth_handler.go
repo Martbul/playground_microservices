@@ -50,20 +50,20 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	}
 
+	// FIXED: Remove type assertion - resp is already *clients.LoginResponse
 	resp, err := h.apiClient.Login(r.Context(), req)
 	if err != nil {
 		http.Redirect(w, r, "/login?error=server_error", http.StatusFound)
 		return
 	}
 
-	loginResp := resp.(*clients.LoginResponse)
-	if !loginResp.Response.Success {
-		http.Redirect(w, r, "/login?error="+loginResp.Response.Message, http.StatusFound)
+	if !resp.Response.Success {
+		http.Redirect(w, r, "/login?error="+resp.Response.Message, http.StatusFound)
 		return
 	}
 
 	// Save user to session
-	err = utils.SaveUserToSession(w, r, h.store, loginResp.User, loginResp.Token)
+	err = utils.SaveUserToSession(w, r, h.store, resp.User, resp.Token)
 	if err != nil {
 		http.Redirect(w, r, "/login?error=session_error", http.StatusFound)
 		return
@@ -115,20 +115,20 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		LastName:  lastName,
 	}
 
+	// FIXED: Remove type assertion
 	resp, err := h.apiClient.Register(r.Context(), req)
 	if err != nil {
 		http.Redirect(w, r, "/register?error=server_error", http.StatusFound)
 		return
 	}
 
-	registerResp := resp.(*clients.RegisterResponse)
-	if !registerResp.Response.Success {
-		http.Redirect(w, r, "/register?error="+registerResp.Response.Message, http.StatusFound)
+	if !resp.Response.Success {
+		http.Redirect(w, r, "/register?error="+resp.Response.Message, http.StatusFound)
 		return
 	}
 
 	// Save user to session
-	err = utils.SaveUserToSession(w, r, h.store, registerResp.User, registerResp.Token)
+	err = utils.SaveUserToSession(w, r, h.store, resp.User, resp.Token)
 	if err != nil {
 		http.Redirect(w, r, "/register?error=session_error", http.StatusFound)
 		return
@@ -154,16 +154,15 @@ func (h *AuthHandler) ShowProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get fresh user data from API
+	// FIXED: Remove type assertion
 	resp, err := h.apiClient.GetProfile(r.Context(), token)
 	if err != nil {
 		http.Redirect(w, r, "/login?error=token_expired", http.StatusFound)
 		return
 	}
 
-	profileResp := resp.(*clients.ProfileResponse)
-	if !profileResp.Response.Success {
-		http.Redirect(w, r, "/login?error="+profileResp.Response.Message, http.StatusFound)
+	if !resp.Response.Success {
+		http.Redirect(w, r, "/login?error="+resp.Response.Message, http.StatusFound)
 		return
 	}
 
@@ -175,7 +174,7 @@ func (h *AuthHandler) ShowProfile(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"Title":   "Profile",
-		"User":    profileResp.User,
+		"User":    resp.User,
 		"Success": r.URL.Query().Get("success"),
 		"Error":   r.URL.Query().Get("error"),
 	}
@@ -205,20 +204,20 @@ func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		Username:  username,
 	}
 
+	// FIXED: Remove type assertion
 	resp, err := h.apiClient.UpdateProfile(r.Context(), token, req)
 	if err != nil {
 		http.Redirect(w, r, "/profile?error=server_error", http.StatusFound)
 		return
 	}
 
-	updateResp := resp.(*clients.ProfileResponse)
-	if !updateResp.Response.Success {
-		http.Redirect(w, r, "/profile?error="+updateResp.Response.Message, http.StatusFound)
+	if !resp.Response.Success {
+		http.Redirect(w, r, "/profile?error="+resp.Response.Message, http.StatusFound)
 		return
 	}
 
 	// Update user in session
-	err = utils.SaveUserToSession(w, r, h.store, updateResp.User, token)
+	err = utils.SaveUserToSession(w, r, h.store, resp.User, token)
 	if err != nil {
 		http.Redirect(w, r, "/profile?error=session_error", http.StatusFound)
 		return
@@ -253,15 +252,15 @@ func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 		NewPassword:     newPassword,
 	}
 
+	// FIXED: Remove type assertion
 	resp, err := h.apiClient.ChangePassword(r.Context(), token, req)
 	if err != nil {
 		http.Redirect(w, r, "/profile?error=server_error", http.StatusFound)
 		return
 	}
 
-	changeResp := resp.(*clients.APIResponse)
-	if !changeResp.Response.Success {
-		http.Redirect(w, r, "/profile?error="+changeResp.Response.Message, http.StatusFound)
+	if !resp.Response.Success {
+		http.Redirect(w, r, "/profile?error="+resp.Response.Message, http.StatusFound)
 		return
 	}
 

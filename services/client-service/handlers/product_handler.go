@@ -75,11 +75,9 @@ func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 
 	// Get categories for filter
 	categoriesResp, _ := h.apiClient.GetCategories(r.Context())
-	var categories []string
+	var categories []clients.Category
 	if categoriesResp != nil {
-		for _, cat := range categoriesResp.Categories {
-			categories = append(categories, cat.Name) // assuming Category has a Name field
-		}
+		categories = categoriesResp.Categories
 	}
 
 	tmpl, err := template.ParseFiles(
@@ -91,13 +89,16 @@ func (h *ProductHandler) ListProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// FIXED: Use correct field names from Pagination struct
 	data := map[string]interface{}{
 		"Title":            "Products",
 		"Products":         resp.Products,
-		// "Total":            resp.Total,
-		// "Page":             resp.CurrentPage,    // Use the correct field name
-		// "Limit":            resp.PerPage,        // Use the correct field name
-		// "TotalPages":       resp.Pages,          // Use the correct field name
+		"Page":             resp.Pagination.Page,
+		"Limit":            resp.Pagination.Limit,
+		"TotalPages":       resp.Pagination.TotalPages,
+		"TotalCount":       resp.Pagination.TotalCount,
+		"HasNext":          resp.Pagination.HasNext,
+		"HasPrev":          resp.Pagination.HasPrev,
 		"Categories":       categories,
 		"SelectedCategory": category,
 		"SearchQuery":      searchQuery,
@@ -157,7 +158,7 @@ func (h *ProductHandler) ShowCreateProduct(w http.ResponseWriter, r *http.Reques
 
 	// Get categories
 	categoriesResp, _ := h.apiClient.GetCategories(r.Context())
-	var categories []string
+	var categories []clients.Category
 	if categoriesResp != nil {
 		categories = categoriesResp.Categories
 	}
@@ -266,7 +267,7 @@ func (h *ProductHandler) ShowEditProduct(w http.ResponseWriter, r *http.Request)
 
 	// Get categories
 	categoriesResp, _ := h.apiClient.GetCategories(r.Context())
-	var categories []string
+	var categories []clients.Category
 	if categoriesResp != nil {
 		categories = categoriesResp.Categories
 	}
@@ -397,7 +398,6 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/products/"+id+"/edit?error=server_error", http.StatusFound)
 		return
 	}
-
 
 	if !resp.Response.Success {
 		http.Redirect(w, r, "/products/"+id+"/edit?error="+resp.Response.Message, http.StatusFound)

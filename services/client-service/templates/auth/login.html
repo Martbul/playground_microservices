@@ -1,72 +1,91 @@
 {{define "content"}}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <h2 class="card-title">Sign In</h2>
-                    <p class="text-muted">Welcome back to MicroStore</p>
-                </div>
-
-                {{if .Error}}
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{if eq .Error "server_error"}}
-                            Server error occurred. Please try again.
-                        {{else if eq .Error "session_error"}}
-                            Session error. Please try again.
-                        {{else if eq .Error "not_authenticated"}}
-                            Please sign in to continue.
-                        {{else if eq .Error "token_expired"}}
-                            Your session has expired. Please sign in again.
-                        {{else}}
-                            {{.Error}}
-                        {{end}}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {{end}}
-
-                <form method="POST" action="/login">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control form-control-lg" id="email" name="email" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control form-control-lg" id="password" name="password" required>
-                    </div>
-
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
-                    </div>
-                </form>
-
-                <div class="text-center">
-                    <p class="text-muted">Don't have an account? <a href="/register" class="text-decoration-none">Create one</a></p>
-                </div>
-            </div>
+<div class="max-w-md mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Welcome Back</h1>
+            <p class="text-gray-600 mt-2">Sign in to your account</p>
         </div>
 
-        <!-- Demo Credentials -->
-        <div class="card mt-4 bg-light border-0">
-            <div class="card-body">
-                <h6 class="card-title">Demo Credentials</h6>
-                <p class="card-text small text-muted mb-1">
-                    <strong>Email:</strong> demo@microstore.com<br>
-                    <strong>Password:</strong> demo123456
-                </p>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="fillDemoCredentials()">
-                    Use Demo Credentials
-                </button>
+        {{if .Error}}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 alert-dismissible">
+            <span class="block sm:inline">
+                {{if eq .Error "server_error"}}
+                    Server error occurred. Please try again.
+                {{else if eq .Error "session_error"}}
+                    Session error. Please try again.
+                {{else if eq .Error "not_authenticated"}}
+                    Please log in to continue.
+                {{else if eq .Error "token_expired"}}
+                    Your session has expired. Please log in again.
+                {{else}}
+                    {{.Error}}
+                {{end}}
+            </span>
+        </div>
+        {{end}}
+
+        <form method="POST" action="/login" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                </label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="you@example.com"
+                >
             </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                    Password
+                </label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter your password"
+                >
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input 
+                        type="checkbox" 
+                        id="remember" 
+                        name="remember" 
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    >
+                    <label for="remember" class="ml-2 block text-sm text-gray-700">
+                        Remember me
+                    </label>
+                </div>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-700">
+                    Forgot password?
+                </a>
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+            >
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-gray-600">
+                Don't have an account? 
+                <a href="/register" class="text-blue-600 hover:text-blue-700 font-semibold">
+                    Sign up
+                </a>
+            </p>
         </div>
     </div>
 </div>
-
-<script>
-function fillDemoCredentials() {
-    document.getElementById('email').value = 'demo@microstore.com';
-    document.getElementById('password').value = 'demo123456';
-}
-</script>
 {{end}}
