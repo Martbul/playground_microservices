@@ -100,7 +100,7 @@ type ValidateTokenRequest struct {
 }
 
 type ValidateTokenResponse struct {
-	Response APIResponse `json:"response"`
+	Response Response `json:"response"`
 	Valid    bool        `json:"valid"`
 	User     User        `json:"user"`
 }
@@ -110,7 +110,7 @@ type RefreshTokenRequest struct {
 }
 
 type RefreshTokenResponse struct {
-	Response     APIResponse `json:"response"`
+	Response     bool `json:"response"`
 	Token        string      `json:"token"`
 	RefreshToken string      `json:"refresh_token"`
 	ExpiresAt    int64       `json:"expires_at"`
